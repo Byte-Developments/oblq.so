@@ -12,7 +12,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useIcon } from "@/app/icon-maker/context/icon-context";
 
 const utilities = [
   { 
@@ -81,14 +80,6 @@ export function Navigation() {
           </div>
           
           <div className="flex items-center gap-4">
-            {currentUtil?.action && pathname === "/icon-maker" && (
-              <IconMakerAction 
-                icon={currentUtil.action.icon} 
-                label={currentUtil.action.label} 
-                gradient={currentUtil.gradient}
-              />
-            )}
-            
             {currentUtil?.action && pathname !== "/icon-maker" && (
               <Button className={cn(
                 "gap-2 bg-gradient-to-r",
@@ -113,32 +104,5 @@ export function Navigation() {
         </div>
       </div>
     </nav>
-  );
-}
-
-// Separate component for Icon Maker action button that uses the context
-function IconMakerAction({ 
-  icon: Icon, 
-  label, 
-  gradient 
-}: { 
-  icon: any; 
-  label: string; 
-  gradient: string;
-}) {
-  const { handleCopySvg } = useIcon();
-
-  return (
-    <Button 
-      className={cn(
-        "gap-2 bg-gradient-to-r",
-        gradient,
-        "text-white hover:opacity-90"
-      )}
-      onClick={handleCopySvg}
-    >
-      <Icon className="h-4 w-4" />
-      {label}
-    </Button>
   );
 }

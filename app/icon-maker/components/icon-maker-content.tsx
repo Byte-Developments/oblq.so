@@ -3,6 +3,7 @@
 import { useIcon } from "../context/icon-context";
 import { IconGrid } from "./icon-grid";
 import { ColorPicker } from "./color-picker";
+import { IconMakerHeader } from "./icon-maker-header";
 import { getValidIcons } from "@/lib/utils/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card } from "@/components/ui/card";
@@ -37,12 +38,7 @@ export function IconMakerContent() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 page-transition">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold">Icon Maker</h1>
-        <p className="text-muted-foreground">
-          Create beautiful gradient icons using Font Awesome.
-        </p>
-      </div>
+      <IconMakerHeader />
 
       <div className="grid gap-8 md:grid-cols-2">
         <Card className="p-8 space-y-6 rounded-xl shadow-lg">
