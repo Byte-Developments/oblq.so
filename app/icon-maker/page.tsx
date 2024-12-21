@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { createSvgString } from "@/lib/utils/svg";
 import { IconGrid } from "./components/icon-grid";
 import { ColorPicker } from "./components/color-picker";
-import { getValidIcons, isValidIcon } from "@/lib/utils/icons";
+import { getValidIcons, isValidIcon, getIconPathData } from "@/lib/utils/icons";
 
 library.add(fas);
 
@@ -44,11 +44,12 @@ export default function IconMaker() {
       }
 
       const iconDef = validIcons[icon];
-      if (!iconDef?.icon?.[4]) {
-        throw new Error("Icon path not found");
+      if (!iconDef) {
+        throw new Error("Icon not found");
       }
 
-      const svgString = createSvgString(iconDef.icon[4], {
+      const pathData = getIconPathData(iconDef);
+      const svgString = createSvgString(pathData, {
         background: activeTab === "gradient" 
           ? `${color1}, ${color2}`
           : `${backgroundColor}, ${backgroundColor}`
@@ -57,6 +58,7 @@ export default function IconMaker() {
       await navigator.clipboard.writeText(svgString);
       toast.success("SVG copied to clipboard!");
     } catch (error) {
+      console.error(error);
       toast.error("Failed to copy SVG");
     }
   }, [icon, color1, color2, backgroundColor, activeTab]);
@@ -153,7 +155,7 @@ export default function IconMaker() {
         <Card className="icon-preview flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
           <div className="text-center transform hover:scale-105 transition-transform duration-300">
             <FontAwesomeIcon
-              icon={["fas", icon as any]}
+              icon={["fas", icon]}
               style={iconStyle}
             />
           </div>

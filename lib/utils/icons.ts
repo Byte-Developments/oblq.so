@@ -1,4 +1,4 @@
-import { IconDefinition, IconName } from "@fortawesome/fontawesome-svg-core";
+import { IconDefinition, IconName, IconPathData } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 
 // Get valid icon names from fas object
@@ -20,4 +20,9 @@ export const getValidIcons = (): Record<string, IconDefinition> => {
 // Check if an icon name is valid
 export const isValidIcon = (name: string): boolean => {
   return validIconNames.includes(name as IconName);
+};
+
+// Get icon path data
+export const getIconPathData = (icon: IconDefinition): IconPathData => {
+  return icon.icon[4];
 };
