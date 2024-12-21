@@ -30,7 +30,7 @@ const utilities = [
     gradient: "from-purple-500 to-pink-500",
     action: { icon: Download, label: "Export Image", onClick: () => {} }
   },
-  { 
+  {
     name: "Icon Maker",
     href: "/icon-maker",
     icon: Palette,
@@ -40,9 +40,8 @@ const utilities = [
       icon: Copy, 
       label: "Copy SVG",
       onClick: () => {
-        const handleCopySvg = (window as any).handleCopySvg;
-        if (handleCopySvg) {
-          handleCopySvg();
+        if (typeof window !== 'undefined' && (window as any).handleCopySvg) {
+          (window as any).handleCopySvg();
         }
       }
     }

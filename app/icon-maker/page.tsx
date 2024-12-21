@@ -15,6 +15,7 @@ import { IconGrid } from "./components/icon-grid";
 import { ColorPicker } from "./components/color-picker";
 import { getValidIcons, isValidIcon, getIconPathData } from "@/lib/utils/icons";
 import type { IconName } from "@fortawesome/fontawesome-svg-core";
+import { useState, useCallback, useEffect } from "react";
 
 library.add(fas);
 
@@ -63,6 +64,16 @@ export default function IconMaker() {
       toast.error("Failed to copy SVG");
     }
   }, [icon, color1, color2, backgroundColor, activeTab]);
+
+  // Make handleCopySvg available globally using useEffect
+  useEffect(() => {
+    (window as any).handleCopySvg = handleCopySvg;
+    
+    // Cleanup when component unmounts
+    return () => {
+      delete (window as any).handleCopySvg;
+    };
+  }, [handleCopySvg]);
 
   // Make handleCopySvg available globally
   (window as any).handleCopySvg = handleCopySvg;
