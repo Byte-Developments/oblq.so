@@ -14,6 +14,7 @@ import { createSvgString } from "@/lib/utils/svg";
 import { IconGrid } from "./components/icon-grid";
 import { ColorPicker } from "./components/color-picker";
 import { getValidIcons, isValidIcon, getIconPathData } from "@/lib/utils/icons";
+import type { IconName } from "@fortawesome/fontawesome-svg-core";
 
 library.add(fas);
 
@@ -31,7 +32,7 @@ const gradientPresets = [
 ];
 
 export default function IconMaker() {
-  const [icon, setIcon] = useState("heart");
+  const [icon, setIcon] = useState<IconName>("heart");
   const [color1, setColor1] = useState("#FF0080");
   const [color2, setColor2] = useState("#7928CA");
   const [backgroundColor, setBackgroundColor] = useState("#FF0080");
@@ -91,7 +92,7 @@ export default function IconMaker() {
             <div className="space-y-6">
               <IconGrid
                 icons={validIcons}
-                onSelect={setIcon}
+                onSelect={(name) => setIcon(name as IconName)}
                 selectedIcon={icon}
               />
 
@@ -155,7 +156,7 @@ export default function IconMaker() {
         <Card className="icon-preview flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
           <div className="text-center transform hover:scale-105 transition-transform duration-300">
             <FontAwesomeIcon
-              icon={["fas", icon]}
+              icon={["fas", icon as IconName]}
               style={iconStyle}
             />
           </div>
