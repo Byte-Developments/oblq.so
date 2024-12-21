@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,7 +15,6 @@ import { IconGrid } from "./components/icon-grid";
 import { ColorPicker } from "./components/color-picker";
 import { getValidIcons, isValidIcon, getIconPathData } from "@/lib/utils/icons";
 import type { IconName } from "@fortawesome/fontawesome-svg-core";
-import { useState, useCallback, useEffect } from "react";
 
 library.add(fas);
 
