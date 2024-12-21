@@ -1,19 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import { HexColorPicker } from "react-colorful";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useState, useCallback } from "react";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { X } from "lucide-react";
+import { toast } from "sonner";
+import { createSvgString } from "@/lib/utils/svg";
+import { IconGrid } from "./components/icon-grid";
+import { ColorPicker } from "./components/color-picker";
+import { getValidIcons, isValidIcon } from "@/lib/utils/icons";
 
 library.add(fas);
+
+const validIcons = getValidIcons();
 
 const gradientPresets = [
   { from: "#FF0080", to: "#7928CA", name: "Pink to Purple" },
@@ -30,10 +34,35 @@ export default function IconMaker() {
   const [icon, setIcon] = useState("heart");
   const [color1, setColor1] = useState("#FF0080");
   const [color2, setColor2] = useState("#7928CA");
-  const [showColorPicker1, setShowColorPicker1] = useState(false);
-  const [showColorPicker2, setShowColorPicker2] = useState(false);
   const [backgroundColor, setBackgroundColor] = useState("#FF0080");
   const [activeTab, setActiveTab] = useState("gradient");
+
+  const handleCopySvg = useCallback(async () => {
+    try {
+      if (!isValidIcon(icon)) {
+        throw new Error("Invalid icon selected");
+      }
+
+      const iconDef = validIcons[icon];
+      if (!iconDef?.icon?.[4]) {
+        throw new Error("Icon path not found");
+      }
+
+      const svgString = createSvgString(iconDef.icon[4], {
+        background: activeTab === "gradient" 
+          ? `${color1}, ${color2}`
+          : `${backgroundColor}, ${backgroundColor}`
+      });
+      
+      await navigator.clipboard.writeText(svgString);
+      toast.success("SVG copied to clipboard!");
+    } catch (error) {
+      toast.error("Failed to copy SVG");
+    }
+  }, [icon, color1, color2, backgroundColor, activeTab]);
+
+  // Make handleCopySvg available globally
+  (window as any).handleCopySvg = handleCopySvg;
 
   const iconStyle = {
     background: activeTab === "gradient" 
@@ -58,15 +87,11 @@ export default function IconMaker() {
         <Card className="p-8 space-y-6 rounded-xl shadow-lg">
           <ScrollArea className="h-[600px] pr-4">
             <div className="space-y-6">
-              <div>
-                <Label>Icon Name</Label>
-                <Input
-                  value={icon}
-                  onChange={(e) => setIcon(e.target.value)}
-                  placeholder="Enter Font Awesome icon name (e.g., heart)"
-                  className="mt-2"
-                />
-              </div>
+              <IconGrid
+                icons={validIcons}
+                onSelect={setIcon}
+                selectedIcon={icon}
+              />
 
               <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="grid w-full grid-cols-2">
@@ -76,64 +101,16 @@ export default function IconMaker() {
 
                 <TabsContent value="gradient" className="space-y-6">
                   <div className="grid gap-4">
-                    <div>
-                      <Label>Color 1</Label>
-                      <div className="color-input-group mt-2">
-                        <div
-                          className="color-preview"
-                          style={{ backgroundColor: color1 }}
-                          onClick={() => setShowColorPicker1(!showColorPicker1)}
-                        />
-                        <Input
-                          value={color1}
-                          onChange={(e) => setColor1(e.target.value)}
-                          onClick={() => setShowColorPicker1(!showColorPicker1)}
-                        />
-                        {showColorPicker1 && (
-                          <div className="color-picker-popover">
-                            <button
-                              className="color-picker-close"
-                              onClick={() => setShowColorPicker1(false)}
-                            >
-                              <X size={16} />
-                            </button>
-                            <HexColorPicker
-                              color={color1}
-                              onChange={setColor1}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <Label>Color 2</Label>
-                      <div className="color-input-group mt-2">
-                        <div
-                          className="color-preview"
-                          style={{ backgroundColor: color2 }}
-                          onClick={() => setShowColorPicker2(!showColorPicker2)}
-                        />
-                        <Input
-                          value={color2}
-                          onChange={(e) => setColor2(e.target.value)}
-                          onClick={() => setShowColorPicker2(!showColorPicker2)}
-                        />
-                        {showColorPicker2 && (
-                          <div className="color-picker-popover">
-                            <button
-                              className="color-picker-close"
-                              onClick={() => setShowColorPicker2(false)}
-                            >
-                              <X size={16} />
-                            </button>
-                            <HexColorPicker
-                              color={color2}
-                              onChange={setColor2}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                    <ColorPicker
+                      label="Color 1"
+                      color={color1}
+                      onChange={setColor1}
+                    />
+                    <ColorPicker
+                      label="Color 2"
+                      color={color2}
+                      onChange={setColor2}
+                    />
                   </div>
 
                   <div>
@@ -162,35 +139,11 @@ export default function IconMaker() {
                 </TabsContent>
 
                 <TabsContent value="solid">
-                  <div className="space-y-4">
-                    <Label>Background Color</Label>
-                    <div className="color-input-group">
-                      <div
-                        className="color-preview"
-                        style={{ backgroundColor }}
-                        onClick={() => setShowColorPicker1(!showColorPicker1)}
-                      />
-                      <Input
-                        value={backgroundColor}
-                        onChange={(e) => setBackgroundColor(e.target.value)}
-                        placeholder="#000000"
-                      />
-                      {showColorPicker1 && (
-                        <div className="color-picker-popover">
-                          <button
-                            className="color-picker-close"
-                            onClick={() => setShowColorPicker1(false)}
-                          >
-                            <X size={16} />
-                          </button>
-                          <HexColorPicker
-                            color={backgroundColor}
-                            onChange={setBackgroundColor}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  <ColorPicker
+                    label="Background Color"
+                    color={backgroundColor}
+                    onChange={setBackgroundColor}
+                  />
                 </TabsContent>
               </Tabs>
             </div>

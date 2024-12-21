@@ -201,3 +201,22 @@
 .color-preview:hover {
   transform: scale(1.1);
 }
+
+/* Fix gradient button corners */
+.bg-gradient-to-r {
+  border-radius: var(--radius);
+}
+
+/* Fix navbar overlap */
+.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: hsl(var(--background));
+}
+
+/* Ensure content is below navbar */
+main {
+  position: relative;
+  z-index: 10;
+}
