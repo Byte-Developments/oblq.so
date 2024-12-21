@@ -1,6 +1,6 @@
 "use client";
 
-import { Link2, Code2, Palette, Download, Copy, Plus, Moon, Sun, FileText } from "lucide-react";
+import { Link2, Code2, Palette, Download, Copy, Plus, Moon, Sun } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -20,7 +20,7 @@ const utilities = [
     icon: Link2,
     color: "text-blue-500",
     gradient: "from-blue-500 to-cyan-500",
-    action: { icon: Plus, label: "Create URL", onClick: () => {} }
+    action: { icon: Plus, label: "Create URL" }
   },
   { 
     name: "Code Image",
@@ -28,32 +28,16 @@ const utilities = [
     icon: Code2,
     color: "text-purple-500",
     gradient: "from-purple-500 to-pink-500",
-    action: { icon: Download, label: "Export Image", onClick: () => {} }
+    action: { icon: Download, label: "Export Image" }
   },
-  {
+  { 
     name: "Icon Maker",
     href: "/icon-maker",
     icon: Palette,
     color: "text-red-500",
     gradient: "from-red-500 to-orange-500",
-    action: { 
-      icon: Copy, 
-      label: "Copy SVG",
-      onClick: () => {
-        if (typeof window !== 'undefined' && (window as any).handleCopySvg) {
-          (window as any).handleCopySvg();
-        }
-      }
-    }
+    action: { icon: Copy, label: "Copy SVG" }
   },
-  {
-    name: "Pastebin",
-    href: "/pastebin",
-    icon: FileText,
-    color: "text-green-500",
-    gradient: "from-green-500 to-emerald-500",
-    action: { icon: Plus, label: "Create Paste", onClick: () => {} }
-  }
 ];
 
 export function Navigation() {
@@ -62,7 +46,7 @@ export function Navigation() {
   const currentUtil = utilities.find(util => util.href === pathname);
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="border-b border-border sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-4">
@@ -96,15 +80,20 @@ export function Navigation() {
           </div>
           
           <div className="flex items-center gap-4">
-            {currentUtil?.action && (
-              <Button
-                className={cn(
-                  "gap-2 bg-gradient-to-r rounded-[--radius]",
-                  currentUtil.gradient,
-                  "text-white hover:opacity-90"
-                )}
-                onClick={currentUtil.action.onClick}
-              >
+            {currentUtil?.action && pathname === "/icon-maker" && (
+              <IconMakerAction 
+                icon={currentUtil.action.icon} 
+                label={currentUtil.action.label} 
+                gradient={currentUtil.gradient}
+              />
+            )}
+            
+            {currentUtil?.action && pathname !== "/icon-maker" && (
+              <Button className={cn(
+                "gap-2 bg-gradient-to-r",
+                currentUtil.gradient,
+                "text-white hover:opacity-90"
+              )}>
                 <currentUtil.action.icon className="h-4 w-4" />
                 {currentUtil.action.label}
               </Button>
@@ -123,5 +112,32 @@ export function Navigation() {
         </div>
       </div>
     </nav>
+  );
+}
+
+// Separate component for Icon Maker action button that uses the context
+function IconMakerAction({ 
+  icon: Icon, 
+  label, 
+  gradient 
+}: { 
+  icon: any; 
+  label: string; 
+  gradient: string;
+}) {
+  const { handleCopySvg } = useIcon();
+
+  return (
+    <Button 
+      className={cn(
+        "gap-2 bg-gradient-to-r",
+        gradient,
+        "text-white hover:opacity-90"
+      )}
+      onClick={handleCopySvg}
+    >
+      <Icon className="h-4 w-4" />
+      {label}
+    </Button>
   );
 }
